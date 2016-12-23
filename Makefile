@@ -8,13 +8,13 @@ OCB = 		ocamlbuild $(OCB_FLAGS)
 # or change extensions of files to %.ml -> %.native then we have
 # to compile one file at a time. I probably just don't understand
 # enough about compilation yet
-OCAML_SRC = main.ml \
-						basic.ml
+OCAML_SRC = main/main.ml\
+						basic/basic.ml
 
 all: native
 
-native: basic.ml
-	$(OCB) basic.native
+native: $(OCAML_SRC)
+	$(OCB) basic/basic.native
 
 clean:
 	$(OCB) -clean
