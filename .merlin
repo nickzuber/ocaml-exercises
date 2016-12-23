@@ -1,3 +1,5 @@
-S main.ml
+S main/**
+S basic/**
+
 
 B _build/**
