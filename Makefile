@@ -13,6 +13,9 @@ OCAML_SRC = main/main.ml\
 
 all: native
 
+run: 
+	make native && ./basic.native
+
 native: $(OCAML_SRC)
 	$(OCB) basic/basic.native
 

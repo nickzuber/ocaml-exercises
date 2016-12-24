@@ -23,8 +23,20 @@ let list_to_int lst =
 
 let lst = [1;2;3]
 
-let () = printf "LST: "
+let () = printf "\n"
+let () = printf "list:\t"
 let () = List.iter ~f:(printf "%d, ") lst
 let () = printf "\n"
-let () = printf "INT: %d\n" (list_to_int lst)
+let () = printf "int:\t%d\n" (list_to_int lst)
+
+(* *)
+let avg_num lst = 
+  let sum = List.fold lst 
+  ~init:0
+  ~f:(fun acc x -> acc + x) in
+  let length = length_of_list lst in
+  (float_of_int sum) /. length
+;;
+
+let () = printf "sum:\t%f\n" (avg_num [1;2;5;3;6;2;8;3;4;2;1])
 
