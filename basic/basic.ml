@@ -53,7 +53,7 @@ let () = printf "eil:\t%B\n" (exists_in_list 6 [1;2;3;4;5])
 let dedup lst =
   List.fold lst
   ~init:[]
-  ~f:(fun acc x -> if (exists_in_list x acc) then acc else (x :: acc))
+  ~f:(fun acc x -> if (exists_in_list x acc) then acc else (acc @ [x]))
 ;;
 
 let () = printf "dedup:\t"
