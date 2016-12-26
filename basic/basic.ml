@@ -62,9 +62,23 @@ let () = printf "%s" (Plist.stringify_s ["test";"strings";"now"])
 let () = printf "%s" (Plist.stringify_f [1.;2.;3.])
 let () = printf "%s" (Plist.stringify_i [1;2;3;4;5;6;7])
 
+(*
+ * This doesn't work because it won't let me create a list of lists
+ * instead it throws a strange type error
+ *
+let bucket l =
+  let rec bucket_n l last cur_list all_lists =
+    match l with
+    | [] -> all_lists
+    | n :: rest -> 
+        if n = last then (bucket_n rest last (cur_list @ [n]) all_lists)
+        else (bucket_n rest n [] ([all_lists] @ [cur_list]))
+  in bucket_n l 0 [] []
 
-
-
+let () = List.iter ~f:(fun inner_list -> 
+                        List.iter ~f:(printf "%s" (Plist.stringify_i inner_list)))
+         (bucket [1;1;1;1;2;2;2;3;3;4;4;5;6;6;6;6;7;7])
+*)
 
 
 
