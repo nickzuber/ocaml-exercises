@@ -55,6 +55,9 @@ let () = printf "dedup:\t"
 let () = List.iter ~f:(printf "%d, ") (dedup [1;2;3;4;5;5;6;1;2])
 let () = printf "\n"
 
+let () = printf "'dedep:\t%s" (Plist.stringify_i (dedup
+[1;1;2;3;4;2;3;4;6;7;8;3;4;5;6;7]))
+
 let () = printf "%s" (Plist.stringify_s ["test";"strings";"now"])
 let () = printf "%s" (Plist.stringify_f [1.;2.;3.])
 let () = printf "%s" (Plist.stringify_i [1;2;3;4;5;6;7])
