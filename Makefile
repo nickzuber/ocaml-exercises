@@ -9,15 +9,16 @@ OCB = 		ocamlbuild $(OCB_FLAGS)
 # to compile one file at a time. I probably just don't understand
 # enough about compilation yet
 OCAML_SRC = main/main.ml\
-						basic/basic.ml
+						basic/basic.ml\
+						interp/interp.ml
 
 all: native
 
 run: 
-	make native && ./basic.native
+	make native && ./interp.native
 
 native: $(OCAML_SRC)
-	$(OCB) basic/basic.native
+	$(OCB) interp/interp.native
 
 clean:
 	$(OCB) -clean
