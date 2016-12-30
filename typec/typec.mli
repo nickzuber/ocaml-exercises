@@ -1,41 +1,24 @@
 
-(* Functions, with, and arithmetic expressions *)
-type sexp = 
-  | Num of int
-  | Binop
-  | With
-  | Id of string
-  | Fun of string list * sexp
-  | App of sexp * sexp list
+(* Different forms of an expression, this is basically our AST structure *)
+type expr = 
+  | Num of int                                  (* Num 2 *)
+  | Id of string                                (* Id "x" *)
+  | Bool of bool                                (* Bool true *)
+  | Binop of (int -> int -> int) * expr * expr  (* Binop (+) (Num 1) (Num 2) *)
+  | Bif of bool * expr * expr                   (* Bif true (Num 1) (Num 2) *)
+  | With of string * expr * expr                (* With "x" (Binop (+) (Id "x") (Num 2)) (Num 1) *)
+  | App of expr * expr                          (* App (Binop (...)) (Num 3) *)
+  | Fun of string * expr                        (* Fun "x" (...) *)
 
-(*  *)
-type closure = {
-  params: string list; (* the list of identifiers *)
-  body: sexp;          (* body expression *)
-  env: env;            (* function's scope *)
-}
+(* Valid types *)
+type t = 
+  | T_num
+  | T_bool
+  | T_fun
 
-(* Interpreted value for a sexp *)
-type sexp_value =
-  | NumV of int
-  | ClosureV of closure
+(* Parses string expressions into an AST *)
+val parse : string -> expr
 
-(* Binding from symbol to its value *)
-type binding = {
-  name: string;
-  value: sexp;
-}
+(* Type checks a given AST *)
+val typeCheck : expr -> t
 
-(* Empty environment *)
-type mt_env = Empty
-
-(* Environment scoping *)
-type an_env = {
-  name: string;
-  value: sexp_value;
-  next: env;
-}
-
-type env = 
-  | MtEnv of mt_env
-  | AnEnv of an_env
