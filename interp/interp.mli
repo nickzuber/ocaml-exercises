@@ -8,6 +8,11 @@ type cfwae =
   | Fun
   | App
 
+(* Interpreted value for a cfwae *)
+type cfwae_value =
+  | NumV
+  | ClosureV
+
 (* Binding from symbol to its value *)
 type binding = 
   { name  : string;
