@@ -19,6 +19,6 @@ type t =
 (* Parses string expressions into an AST *)
 val parse : string -> expr
 
-(* Type checks a given AST *)
-val typeCheck : expr -> t
+(* Type checks a given AST and if no type errors occur, provides expression type *)
+val typeOf : expr -> t
 
