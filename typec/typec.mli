@@ -1,14 +1,21 @@
 
+(* Representing the binary operations on numbers *)
+type ops =
+  | Plus
+  | Minus
+  | Mult
+  | Div
+
 (* Different forms of an expression, this is basically our AST structure *)
 type expr = 
   | Num of int                                  (* Num 2 *)
   | Id of string                                (* Id "x" *)
   | Bool of bool                                (* Bool true *)
-  | Binop of (int -> int -> int) * expr * expr  (* Binop (+) (Num 1) (Num 2) *)
-  | Bif of bool * expr * expr                   (* Bif true (Num 1) (Num 2) *)
-  | With of string * expr * expr                (* With "x" (Binop (+) (Id "x") (Num 2)) (Num 1) *)
-  | App of expr * expr                          (* App (Binop (...)) (Num 3) *)
-  | Fun of string * expr                        (* Fun "x" (...) *)
+  | Binop of ops * expr * expr                  (* Binop (Plus, (Num 1), (Num 2)) *)
+  | Bif of bool * expr * expr                   (* Bif (true, (Num 1), (Num 2)) *)
+  | With of string * expr * expr                (* With ("x", (Binop (Plus, (Id "x"), (Num 2))), (Num 1)) *)
+  | App of expr * expr                          (* App ((Binop (...)), (Num 3)) *)
+  | Fun of string * expr                        (* Fun ("x", (...)) *)
 
 (* Valid types *)
 type t = 

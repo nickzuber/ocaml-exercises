@@ -10,15 +10,15 @@ OCB = 		ocamlbuild $(OCB_FLAGS)
 # enough about compilation yet
 OCAML_SRC = main/main.ml\
 						basic/basic.ml\
-						interp/interp.ml
+						typec/typec.ml
 
 all: native
 
 run: 
-	make native && ./interp.native
+	make native && ./typec.native
 
 native: $(OCAML_SRC)
-	$(OCB) interp/interp.native
+	$(OCB) typec/typec.native
 
 clean:
 	$(OCB) -clean
