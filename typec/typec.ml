@@ -41,6 +41,6 @@ let printType = function
   | T_bool -> "Boolean"
   | T_fun -> "Function"
 
-let () = print_endline (printType (typeOf sampleAST))
+let () = Printf.printf "\n => %s\n" (printType (typeOf sampleAST))
 
 
