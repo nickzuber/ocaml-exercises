@@ -41,7 +41,7 @@ let sampleAST =
           (Num 2))))
 
 let simpleAST = 
-  Bool true
+  Num 2
 
 let rec resolve id env = 
   match env with
@@ -51,7 +51,8 @@ let rec resolve id env =
 
 let typeOf expr = 
   let rec getType e env = 
-    match e with
+   match e with
+    | Null n -> T_error
     | Num n -> T_num
     | Bool b -> T_bool
     | Id id -> getType (resolve id env) env
@@ -61,6 +62,7 @@ let printType = function
   | T_num -> "NumberLiteral"
   | T_bool -> "Boolean"
   | T_fun -> "Function"
+  | T_error -> "An error has occured. Probably couldn't resolve an identifier."
 
 let () = Printf.printf "\n => %s\n" (printType (typeOf simpleAST))
 
