@@ -24,14 +24,15 @@ type t =
   | T_fun
 
 let parse sexp = 
+  Id "Not implemented"
+
+let sampleAST = 
   Binop (Plus,
         (Binop (Mult, (Num 1), (Num 2))),
         (With 
           ("x",
           (Binop (Minus, (Num 1), (Id "x"))),
           (Num 2))))
-
-let sampleAST = parse "(+ (* 1 2) (with x (- 1 x) 2))"
 
 let typeOf expr =
   T_num
