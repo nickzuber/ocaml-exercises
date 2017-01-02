@@ -16,12 +16,19 @@ type expr =
   | With of string * expr * expr                (* With ("x", (Binop (Plus, (Id "x"), (Num 2))), (Num 1)) *)
   | App of expr * expr                          (* App ((Binop (...)), (Num 3)) *)
   | Fun of string * expr                        (* Fun ("x", (...)) *)
+  | Null
 
 (* Valid types *)
 type t = 
   | T_num
   | T_bool
   | T_fun
+
+(* Binding from an identifier to its value *)
+type binding = {
+  name: string;
+  value: expr;
+} 
 
 (* Parses string expressions into an AST *)
 val parse : string -> expr
