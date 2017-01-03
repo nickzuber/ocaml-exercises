@@ -13,7 +13,7 @@ type expr =
   | Bool of bool                                (* Bool true *)
   | Binop of ops * expr * expr                  (* Binop (Plus, (Num 1), (Num 2)) *)
   | Bif of bool * expr * expr                   (* Bif (true, (Num 1), (Num 2)) *)
-  | With of string * expr * expr                (* With ("x", (Binop (Plus, (Id "x"), (Num 2))), (Num 1)) *)
+  | With of string * expr * expr                (* With ("x", (Num 1), (Binop (Plus, (Id "x"), (Num 2))) *)
   | App of expr * expr                          (* App ((Binop (...)), (Num 3)) *)
   | Fun of string * expr                        (* Fun ("x", (...)) *)
   | Null
@@ -23,6 +23,7 @@ type t =
   | T_num
   | T_bool
   | T_fun
+  | T_error of string
 
 (* Binding from an identifier to its value *)
 type binding = {

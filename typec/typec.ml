@@ -23,6 +23,7 @@ type t =
   | T_num
   | T_bool
   | T_fun
+  | T_error of string
 
 type binding = {
   name: string;
@@ -41,7 +42,7 @@ let sampleAST =
           (Num 2))))
 
 let simpleAST = 
-  Num 2
+  Binop (Plus, (Num 1), (Bool true))
 
 let rec resolve id env = 
   match env with
@@ -49,20 +50,39 @@ let rec resolve id env =
   | bind :: rest when bind.name = id -> bind.value
   | bind :: rest -> resolve id rest
 
+(* Checks if a given type is a T_num *)
+let isNum t = 
+  match t with
+  | T_num -> true
+  | _ -> false
+
 let typeOf expr = 
   let rec getType e env = 
    match e with
-    | Null n -> T_error
+    | Null -> T_error "Bad expression."
     | Num n -> T_num
     | Bool b -> T_bool
     | Id id -> getType (resolve id env) env
+    | Binop (ops, lhs, rhs) -> 
+        let lhs' = getType lhs env in
+        let rhs' = getType rhs env in
+        if isNum lhs' then
+          if isNum rhs' then
+            T_num
+          else T_error "Binop right hand side was not a number."
+        else T_error "Binop left hand side was not a number."
+    | Bif (cond, th, el) -> T_error "Not implemented"
+    | With (id, value, body) -> T_error "Not implemented"
+    | App (body, args) -> T_error "Not implemented"
+    | Fun (param, body) -> T_error "Not implemented"
   in getType expr []
 
-let printType = function
+let printType t =
+  match t with
   | T_num -> "NumberLiteral"
   | T_bool -> "Boolean"
   | T_fun -> "Function"
-  | T_error -> "An error has occured. Probably couldn't resolve an identifier."
+  | T_error t -> "TypeError: " ^ t
 
 let () = Printf.printf "\n => %s\n" (printType (typeOf simpleAST))
 
