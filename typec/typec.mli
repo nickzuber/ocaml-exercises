@@ -12,7 +12,7 @@ type expr =
   | Id of string                                (* Id "x" *)
   | Bool of bool                                (* Bool true *)
   | Binop of ops * expr * expr                  (* Binop (Plus, (Num 1), (Num 2)) *)
-  | Bif of bool * expr * expr                   (* Bif (true, (Num 1), (Num 2)) *)
+  | Bif of expr * expr * expr                   (* Bif (Bool true, (Num 1), (Num 2)) *)
   | With of string * expr * expr                (* With ("x", (Num 1), (Binop (Plus, (Id "x"), (Num 2))) *)
   | App of expr * expr                          (* App ((Binop (...)), (Num 3)) *)
   | Fun of string * expr                        (* Fun ("x", (...)) *)

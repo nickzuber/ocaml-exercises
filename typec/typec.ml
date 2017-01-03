@@ -12,7 +12,7 @@ type expr =
   | Id of string
   | Bool of bool
   | Binop of ops * expr * expr
-  | Bif of bool * expr * expr
+  | Bif of expr * expr * expr
   | With of string * expr * expr
   | App of expr * expr
   | Fun of string * expr
