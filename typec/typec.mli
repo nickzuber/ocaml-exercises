@@ -21,14 +21,14 @@ type expr =
 type t = 
   | T_num
   | T_bool
-  | T_fun of t * t (* Represents the type of the single paramter and the return type*)
-  | T_arb          (* Represents some arbitrary type that can be anything *)
+  | T_fun of t * t   (* Represents the type of the single paramter and the return type*)
+  | T_arb of string  (* Represents some arbitrary type that can be anything *)
   | T_error of string
 
 (* Binding from an identifier to the type of its value *)
 type binding = {
   name: string;
-  value: t;
+  mutable value: t;
 } 
 
 (* An environment or closure consisting of bindings *)

@@ -21,8 +21,8 @@ type expr =
 type t = 
   | T_num
   | T_bool
-  | T_fun of t * t (* Represents the type of the single paramter and the return type*)
-  | T_arb          (* Represents some arbitrary type that can be anything *)
+  | T_fun of t * t   (* Represents the type of the single paramter and the return type*)
+  | T_arb of string  (* Represents some arbitrary type that can be anything *)
   | T_error of string
 
 let rec printType t =
@@ -30,12 +30,12 @@ let rec printType t =
   | T_num -> "number"
   | T_bool -> "boolean"
   | T_fun (p, r) -> "function : " ^ (printType p) ^ " -> " ^ (printType r)
-  | T_arb -> "a'"
+  | T_arb x -> "(\"" ^ x ^ "\" = " ^ "a')"
   | T_error t -> "TypeError: " ^ t
 
 type binding = {
   name: string;
-  value: t;
+  mutable value: t;
 }
 
 type env = 
@@ -69,6 +69,22 @@ let caughtError t =
   | T_error _ -> true
   | _ -> false
 
+let caughtArb t =
+  match t with
+  | T_arb _ -> true
+  | _ -> false
+
+let getArbName t =
+  match t with
+  | T_arb p -> p
+  | _ -> "Unknown identifier name"
+
+let rec updateBinding v id env =
+  match env with
+  | Mt -> T_error "Couldn't find identifier when updating type. Should never get here."
+  | Env (b, _) when b.name = id -> (b.value <- v); v
+  | Env (_, e) -> updateBinding v id e
+
 let typeOf expr = 
   let rec getType e env = 
    match e with
@@ -82,8 +98,10 @@ let typeOf expr =
           if rhs' = T_num then
             T_num
           else if caughtError rhs' then rhs'
+          else if caughtArb rhs' then updateBinding T_num (getArbName rhs') env
           else T_error ("Binop right hand side was not a number, instead we found: " ^ (printType rhs'))
         else if caughtError lhs' then lhs'
+        else if caughtArb lhs' then updateBinding T_num (getArbName lhs') env
         else T_error ("Binop left hand side was not a number, instead we found: " ^ (printType lhs'))
     | Bif (cond, th, el) -> 
         let cond' = getType cond env in
@@ -103,7 +121,7 @@ let typeOf expr =
         getType body env'
     | App (body, args) -> T_error "Not implemented"
     | Fun (param, body) ->  
-        let initBinding = { name = param; value = T_arb } in
+        let initBinding = { name = param; value = T_arb param } in
         let env' = extend_env env initBinding in
         let body' = getType body env' in
         let param' = resolve param env' in
@@ -112,6 +130,11 @@ let typeOf expr =
 
 let ast = 
   Fun ("x", (Binop (Plus, (Num 1), (Id "x"))))
+
+let ast = 
+  Fun ("x", (Binop (Plus, (Num 1), 
+                          (Binop (Minus, (Id "x"), 
+                                         (With ("x", (Bool true), (Id "x"))))))))
 
 let () = Printf.printf "\n => %s\n" (printType (typeOf ast))
 
