@@ -132,9 +132,7 @@ let ast =
   Fun ("x", (Binop (Plus, (Num 1), (Id "x"))))
 
 let ast = 
-  Fun ("x", (Binop (Plus, (Num 1), 
-                          (Binop (Minus, (Id "x"), 
-                                         (With ("x", (Bool true), (Id "x"))))))))
+  Fun ("x", (Num 1))
 
 let () = Printf.printf "\n => %s\n" (printType (typeOf ast))
 
