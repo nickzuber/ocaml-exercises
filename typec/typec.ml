@@ -56,7 +56,6 @@ let simpleAST =
 
 let rec resolve id env = 
   match env with
-  (* I don't think anything is done with this error at the moment. It's just ignored *)
   | Mt -> T_error "Bad expression. Was probably unable to resolve an identifier."
   | Env (b, e) when b.name = id -> b.value
   | Env (b, e) -> resolve id e
