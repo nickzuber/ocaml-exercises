@@ -89,6 +89,8 @@ let typeOf expr =
         if cond' = T_bool then
           if th' = el' then
             th' (* Since both th' and el' are equal, it doesn't matter which one we return here *)
+          else if caughtError th' then th'
+          else if caughtError el' then el'
           else T_error "Bif branches were of different types."
         else T_error "Bif condition was not a boolean."
     | With (id, value, body) -> 
@@ -107,6 +109,6 @@ let printType t =
   | T_fun -> "Function"
   | T_error t -> "TypeError: " ^ t
 
-let () = Printf.printf "\n => %s\n" (printType (typeOf simpleAST))
+let () = Printf.printf "\n => %s\n" (printType (typeOf sampleAST))
 
 
