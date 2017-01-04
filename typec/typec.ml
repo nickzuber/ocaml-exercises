@@ -21,8 +21,17 @@ type expr =
 type t = 
   | T_num
   | T_bool
-  | T_fun
+  | T_fun of t * t (* Represents the type of the single paramter and the return type*)
+  | T_arb          (* Represents some arbitrary type that can be anything *)
   | T_error of string
+
+let rec printType t =
+  match t with
+  | T_num -> "number"
+  | T_bool -> "boolean"
+  | T_fun (p, r) -> "function : " ^ (printType p) ^ " -> " ^ (printType r)
+  | T_arb -> "a'"
+  | T_error t -> "TypeError: " ^ t
 
 type binding = {
   name: string;
@@ -49,27 +58,22 @@ let sampleAST =
           (Num 2),
           (Binop (Minus, (Num 1), (Id "x"))))))
 
-let simpleAST = 
-  With ("x",
-       (Num 2),
-       (Binop (Minus, (Num 1), (Id "y"))))
-
 let rec resolve id env = 
   match env with
   | Mt -> T_error "Bad expression. Was probably unable to resolve an identifier."
-  | Env (b, e) when b.name = id -> b.value
-  | Env (b, e) -> resolve id e
+  | Env (b, _) when b.name = id -> b.value
+  | Env (_, e) -> resolve id e
 
 let caughtError t = 
   match t with 
-  | T_error msg -> true
+  | T_error _ -> true
   | _ -> false
 
 let typeOf expr = 
   let rec getType e env = 
    match e with
-    | Num n -> T_num
-    | Bool b -> T_bool
+    | Num _ -> T_num
+    | Bool _ -> T_bool
     | Id id -> resolve id env
     | Binop (ops, lhs, rhs) -> 
         let lhs' = getType lhs env in
@@ -78,9 +82,9 @@ let typeOf expr =
           if rhs' = T_num then
             T_num
           else if caughtError rhs' then rhs'
-          else T_error "Binop right hand side was not a number."
+          else T_error ("Binop right hand side was not a number, instead we found: " ^ (printType rhs'))
         else if caughtError lhs' then lhs'
-        else T_error "Binop left hand side was not a number."
+        else T_error ("Binop left hand side was not a number, instead we found: " ^ (printType lhs'))
     | Bif (cond, th, el) -> 
         let cond' = getType cond env in
         let th' = getType th env in
@@ -98,16 +102,19 @@ let typeOf expr =
         let env' = extend_env env newBinding in
         getType body env'
     | App (body, args) -> T_error "Not implemented"
-    | Fun (param, body) -> T_error "Not implemented"
+    | Fun (param, body) ->  
+        let initBinding = { name = param; value = T_arb } in
+        let env' = extend_env env initBinding in
+        let body' = getType body env' in
+        let param' = resolve param env' in
+        T_fun (param', body')
   in getType expr Mt
 
-let printType t =
-  match t with
-  | T_num -> "NumberLiteral"
-  | T_bool -> "Boolean"
-  | T_fun -> "Function"
-  | T_error t -> "TypeError: " ^ t
+let ast = 
+  Fun ("x", (Binop (Plus, (Num 1), (Id "x"))))
 
-let () = Printf.printf "\n => %s\n" (printType (typeOf sampleAST))
+let () = Printf.printf "\n => %s\n" (printType (typeOf ast))
+
+
 
 
