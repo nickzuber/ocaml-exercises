@@ -36,7 +36,7 @@ type env =
 let extend_env env b = 
   match env with
   | Mt -> Env (b, Mt)
-  | Env (fb, re) -> Env (b, env)
+  | Env (fb, re) as e -> Env (b, e)
 
 let parse sexp = 
   Id "Not implemented"
@@ -61,6 +61,11 @@ let rec resolve id env =
   | Env (b, e) when b.name = id -> b.value
   | Env (b, e) -> resolve id e
 
+let caughtError t = 
+  match t with 
+  | T_error msg -> true
+  | _ -> false
+
 let typeOf expr = 
   let rec getType e env = 
    match e with
@@ -73,7 +78,9 @@ let typeOf expr =
         if lhs' = T_num then
           if rhs' = T_num then
             T_num
+          else if caughtError rhs' then rhs'
           else T_error "Binop right hand side was not a number."
+        else if caughtError lhs' then lhs'
         else T_error "Binop left hand side was not a number."
     | Bif (cond, th, el) -> 
         let cond' = getType cond env in
