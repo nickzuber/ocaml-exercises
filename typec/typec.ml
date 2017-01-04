@@ -93,7 +93,7 @@ let typeOf expr =
     | Id id -> resolve id env
     | Binop (ops, lhs, rhs) -> 
         let lhs' = getType lhs env in
-        let rhs' = getType rhs env in
+        let rhs' = getType rhs env in (* I'm fixing the type too late. do BEFORE check *)
         if lhs' = T_num then
           if rhs' = T_num then
             T_num
@@ -129,10 +129,8 @@ let typeOf expr =
   in getType expr Mt
 
 let ast = 
-  Fun ("x", (Binop (Plus, (Num 1), (Id "x"))))
-
-let ast = 
-  Fun ("x", (Num 1))
+  Fun ("x", (Binop (Plus, (Id "x"), 
+                          (Bool true))))
 
 let () = Printf.printf "\n => %s\n" (printType (typeOf ast))
 
