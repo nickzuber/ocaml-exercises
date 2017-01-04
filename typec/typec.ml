@@ -93,16 +93,17 @@ let typeOf expr =
     | Id id -> resolve id env
     | Binop (ops, lhs, rhs) -> 
         let lhs' = getType lhs env in
-        let rhs' = getType rhs env in (* I'm fixing the type too late. do BEFORE check *)
-        if lhs' = T_num then
-          if rhs' = T_num then
+        let rhs' = getType rhs env in 
+        (* Refine any arbitrary types *)
+        let rhs'' = if caughtArb rhs' then updateBinding T_num (getArbName rhs') env else rhs' in
+        let lhs'' = if caughtArb lhs' then updateBinding T_num (getArbName lhs') env else lhs' in
+        if lhs'' = T_num then
+          if rhs'' = T_num then
             T_num
-          else if caughtError rhs' then rhs'
-          else if caughtArb rhs' then updateBinding T_num (getArbName rhs') env
-          else T_error ("Binop right hand side was not a number, instead we found: " ^ (printType rhs'))
-        else if caughtError lhs' then lhs'
-        else if caughtArb lhs' then updateBinding T_num (getArbName lhs') env
-        else T_error ("Binop left hand side was not a number, instead we found: " ^ (printType lhs'))
+          else if caughtError rhs'' then rhs''
+          else T_error ("Binop right hand side was not a number, instead we found: " ^ (printType rhs''))
+        else if caughtError lhs'' then lhs''
+        else T_error ("Binop left hand side was not a number, instead we found: " ^ (printType lhs''))
     | Bif (cond, th, el) -> 
         let cond' = getType cond env in
         let th' = getType th env in
@@ -131,6 +132,11 @@ let typeOf expr =
 let ast = 
   Fun ("x", (Binop (Plus, (Id "x"), 
                           (Bool true))))
+
+let ast = 
+  Fun ("x", (Binop (Plus, (Num 1), 
+                          (Binop (Minus, (Id "x"), 
+                                         (With ("x", (Bool true), (Id "x"))))))))
 
 let () = Printf.printf "\n => %s\n" (printType (typeOf ast))
 
