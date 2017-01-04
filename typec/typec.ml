@@ -16,7 +16,6 @@ type expr =
   | With of string * expr * expr
   | App of expr * expr
   | Fun of string * expr
-  | Null
 
 (* Valid types *)
 type t = 
@@ -27,8 +26,17 @@ type t =
 
 type binding = {
   name: string;
-  value: expr;
+  value: t;
 }
+
+type env = 
+  | Mt
+  | Env of binding * env
+
+let extend_env env b = 
+  match env with
+  | Mt -> Env (b, Mt)
+  | Env (fb, re) -> Env (b, env)
 
 let parse sexp = 
   Id "Not implemented"
@@ -38,25 +46,27 @@ let sampleAST =
         (Binop (Mult, (Num 1), (Num 2))),
         (With 
           ("x",
-          (Binop (Minus, (Num 1), (Id "x"))),
-          (Num 2))))
+          (Num 2),
+          (Binop (Minus, (Num 1), (Id "x"))))))
 
 let simpleAST = 
-  Bif ((Binop (Plus, (Num 1), (Num 2))), (Bool false), (Bool true))
+  With ("x",
+       (Num 2),
+       (Binop (Minus, (Num 1), (Id "y"))))
 
 let rec resolve id env = 
   match env with
-  | [] -> Null
-  | bind :: rest when bind.name = id -> bind.value
-  | bind :: rest -> resolve id rest
+  (* I don't think anything is done with this error at the moment. It's just ignored *)
+  | Mt -> T_error "Bad expression. Was probably unable to resolve an identifier."
+  | Env (b, e) when b.name = id -> b.value
+  | Env (b, e) -> resolve id e
 
 let typeOf expr = 
   let rec getType e env = 
    match e with
-    | Null -> T_error "Bad expression."
     | Num n -> T_num
     | Bool b -> T_bool
-    | Id id -> getType (resolve id env) env
+    | Id id -> resolve id env
     | Binop (ops, lhs, rhs) -> 
         let lhs' = getType lhs env in
         let rhs' = getType rhs env in
@@ -71,13 +81,17 @@ let typeOf expr =
         let el' = getType el env in
         if cond' = T_bool then
           if th' = el' then
-            th' (* Since both th' and el' are equal, it doesn't matter which one we return here*)
+            th' (* Since both th' and el' are equal, it doesn't matter which one we return here *)
           else T_error "Bif branches were of different types."
         else T_error "Bif condition was not a boolean."
-    | With (id, value, body) -> T_error "Not implemented"
+    | With (id, value, body) -> 
+        let value' = getType value env in
+        let newBinding = { name = id; value = value' } in
+        let env' = extend_env env newBinding in
+        getType body env'
     | App (body, args) -> T_error "Not implemented"
     | Fun (param, body) -> T_error "Not implemented"
-  in getType expr []
+  in getType expr Mt
 
 let printType t =
   match t with
