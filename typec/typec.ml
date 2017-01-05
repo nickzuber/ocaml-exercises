@@ -120,13 +120,21 @@ let typeOf expr =
         let newBinding = { name = id; value = value' } in
         let env' = extend_env env newBinding in
         getType body env'
-    | App (body, args) -> T_error "Not implemented"
     | Fun (param, body) ->  
         let initBinding = { name = param; value = T_arb param } in
         let env' = extend_env env initBinding in
         let body' = getType body env' in
         let param' = resolve param env' in
         T_fun (param', body')
+    | App (body, arg) -> 
+        let body' = getType body env in
+        let arg' = getType arg env in
+        match body' with
+        | T_fun (pt, bt) when pt = arg' -> bt
+        | T_fun (pt, _) -> 
+            T_error (" The argument applied to the function is the wrong type.\n" ^ 
+            "\t\tWas expecting `" ^ (printType pt) ^ "` but got `" ^ (printType arg') ^ "`")
+        | _ -> body'
   in getType expr Mt
 
 let ast = 
@@ -134,9 +142,10 @@ let ast =
                           (Bool true))))
 
 let ast = 
-  Fun ("x", (Binop (Plus, (Num 1), 
-                          (Binop (Minus, (With ("x", (Bool true), (Id "x"))),
-                                         (Id "x"))))))
+  App (Fun ("x", (Binop (Plus, (Num 1), 
+                          (Binop (Minus, (With ("x", (Num 2), (Id "x"))),
+                                         (Id "x")))))),
+  (Bool true))
 
 let () = Printf.printf "\n => %s\n" (printType (typeOf ast))
 
