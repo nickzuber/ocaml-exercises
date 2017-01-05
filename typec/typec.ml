@@ -130,8 +130,7 @@ let typeOf expr =
         let body' = getType body env in
         let arg' = getType arg env in
         match body' with
-        | T_fun (pt, bt) when pt = arg' -> bt
-        | T_fun (pt, bt) when caughtArb pt -> bt
+        | T_fun (pt, bt) when pt = arg' || caughtArb pt -> bt
         | T_fun (pt, _) -> 
             T_error (" The argument applied to the function is the wrong type.\n" ^ 
             "\t\tWas expecting `" ^ (printType pt) ^ "` but got `" ^ (printType arg') ^ "`")
