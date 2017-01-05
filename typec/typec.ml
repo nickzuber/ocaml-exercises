@@ -30,7 +30,7 @@ let rec printType t =
   | T_num -> "number"
   | T_bool -> "boolean"
   | T_fun (p, r) -> "function : " ^ (printType p) ^ " -> " ^ (printType r)
-  | T_arb x -> "(\"" ^ x ^ "\" = " ^ "a')"
+  | T_arb x -> "(`" ^ x ^ "` = " ^ "a')"
   | T_error t -> "TypeError: " ^ t
 
 type binding = {
@@ -131,6 +131,7 @@ let typeOf expr =
         let arg' = getType arg env in
         match body' with
         | T_fun (pt, bt) when pt = arg' -> bt
+        | T_fun (pt, bt) when caughtArb pt -> bt
         | T_fun (pt, _) -> 
             T_error (" The argument applied to the function is the wrong type.\n" ^ 
             "\t\tWas expecting `" ^ (printType pt) ^ "` but got `" ^ (printType arg') ^ "`")
@@ -138,17 +139,15 @@ let typeOf expr =
   in getType expr Mt
 
 let ast = 
-  Fun ("x", (Binop (Plus, (Id "x"), 
-                          (Bool true))))
+  App (Fun ("x", (Binop (Plus, (Num 1), 
+                         (Num 2)))),
+  (Num 2))
 
-let ast = 
+let _ast = 
   App (Fun ("x", (Binop (Plus, (Num 1), 
                           (Binop (Minus, (With ("x", (Num 2), (Id "x"))),
                                          (Id "x")))))),
   (Bool true))
 
 let () = Printf.printf "\n => %s\n" (printType (typeOf ast))
-
-
-
 
