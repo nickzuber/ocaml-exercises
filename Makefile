@@ -18,7 +18,7 @@ run:
 	make native && ./typec.native
 
 native: $(OCAML_SRC)
-	$(OCB) typec/typec.native
+	$(OCB) -Is typec/cmds typec/typec.native
 
 clean:
 	$(OCB) -clean

@@ -150,3 +150,13 @@ let _ast =
 
 let () = Printf.printf "\n => %s\n" (printType (typeOf ast))
 
+let () = Printf.printf "%d\n" Command.some_number
+
+let level_to_str level =
+  match level with
+  | Command.High -> "High"
+  | Command.Med -> "Med"
+  | Command.Low -> "Low"
+
+let () = Printf.printf "%s\n" (level_to_str Command.High)
+
