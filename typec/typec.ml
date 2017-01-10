@@ -160,3 +160,5 @@ let level_to_str level =
 
 let () = Printf.printf "%s\n" (level_to_str Command.High)
 
+let () = Printf.printf "%d\n" Mod.t
+
