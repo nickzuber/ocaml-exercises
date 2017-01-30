@@ -12,8 +12,9 @@ module Token = struct
     | RPAREN
     | EOL
 
-  let token_to_string = function
-    | INT -> "INT"
+  let token_to_string tok = 
+    match tok with
+    | INT n -> "INT" ^ (string_of_int n)
     | PLUS -> "PLUS"
     | MINUS -> "MINUS"
     | TIMES -> "TIMES"

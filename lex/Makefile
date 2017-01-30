@@ -6,10 +6,10 @@ all:
 	ocamlc -o obj lexer.cmo parser.cmo
 
 clean:
-	rm ./*.cmo
-	rm ./*.cmi
-	rm ./lexer.ml
-	rm ./obj
+	rm *.cmo
+	rm *.cmi
+	rm lexer.ml
+	rm obj
 
 restart:
 	make clean && make all
