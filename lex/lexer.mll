@@ -11,6 +11,16 @@ module Token = struct
     | LPAREN
     | RPAREN
     | EOL
+
+  let token_to_string = function
+    | INT -> "INT"
+    | PLUS -> "PLUS"
+    | MINUS -> "MINUS"
+    | TIMES -> "TIMES"
+    | DIV -> "DIV"
+    | LPAREN -> "LPAREN"
+    | RPAREN -> "RPAREN"
+    | EOL -> "EOL"
 end
 open Token
 }
