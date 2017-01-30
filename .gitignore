@@ -1,4 +1,7 @@
 _build
 .DS_Store
 *.native
+*.cmo
+*.cmi
+obj
 
