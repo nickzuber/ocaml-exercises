@@ -14,7 +14,7 @@ module Token = struct
 
   let token_to_string tok = 
     match tok with
-    | INT n -> "INT" ^ (string_of_int n)
+    | INT n -> "INT(" ^ (string_of_int n) ^ ")"
     | PLUS -> "PLUS"
     | MINUS -> "MINUS"
     | TIMES -> "TIMES"
