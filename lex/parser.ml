@@ -18,9 +18,6 @@ let _ =
     let result = Lexer.token lexbuf in
     printf "%s\n" (Token.token_to_string result);
     printf "lexbuf: %d\n" (Lexing.lexeme_start lexbuf)
-(* 
-    List.iter (fun tok -> printf "%s\n" (Lexer.Token.token_to_string tok)) result 
-*)
   with Lexer.Eof ->
     exit 0
 
