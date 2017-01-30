@@ -1,7 +1,18 @@
 (* File lexer.mll *)
 {
-  open Parser        (* The type token is defined in parser.mli *)
-  exception Eof
+exception Eof
+module Token = struct
+  type t =
+    | INT of int
+    | PLUS
+    | MINUS
+    | TIMES
+    | DIV
+    | LPAREN
+    | RPAREN
+    | EOL
+end
+open Token
 }
 rule token = parse
   | [' ' '\t']     { token lexbuf }     (* skip blanks *)
