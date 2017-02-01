@@ -8,7 +8,6 @@ module Token = Lexer.Token
  *  - I've noticed this env is being passed around after each token iteration,
  *    this must be the source of truth for lexing?
  *
- * 
  *)
 
 let _ =
