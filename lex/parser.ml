@@ -1,5 +1,6 @@
 
 module Token = Lexer.Token
+open Batteries
 
 (* GENERAL NOTES ABOUT STRUCTURE:
  * 
@@ -16,8 +17,7 @@ let _ =
     let input = open_in filename in
     let filebuf = Lexing.from_input input in
     let result = Lexer.token filebuf in
-    Printf.printf "%s\n" (Token.token_to_string result);
-    Printf.printf "lexbuf: %d\n" (Lexing.lexeme_start lexbuf)
+    Printf.printf "%s\n" (Token.token_to_string result)
   with Lexer.Eof ->
     exit 0
 

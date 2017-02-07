@@ -2,8 +2,9 @@
 all:
 	ocamllex lexer.mll
 	ocamlc -c lexer.ml
-	ocamlc -c parser.ml
-	ocamlc -o obj lexer.cmo parser.cmo
+	ocamlfind ocamlc -c -linkpkg -package batteries parser.ml
+	ocamlfind ocamlc -o obj -linkpkg \
+		-package batteries lexer.cmo parser.cmo
 
 clean:
 	rm *.cmo
