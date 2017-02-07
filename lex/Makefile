@@ -1,6 +1,6 @@
 
 run: 
-	./obj test.txt
+	make all && ./obj test.txt
 
 all:
 	ocamllex lexer.mll
