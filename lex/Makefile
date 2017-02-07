@@ -1,4 +1,7 @@
 
+run: 
+	./obj test.txt
+
 all:
 	ocamllex lexer.mll
 	ocamlc -c lexer.ml
