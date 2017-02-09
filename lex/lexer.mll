@@ -25,6 +25,7 @@ module Token = struct
 end
 open Token
 }
+
 rule token = parse
   | [' ' '\t']     { token lexbuf }     (* skip blanks *)
   | ['\n' ]        { EOL }
