@@ -4,20 +4,30 @@ open Batteries
 
 let filename = Sys.argv.(1)
 
-let env = []
+let env = {
+  Token.
+  state = [REGULAR];
+  exprs = [[]];
+  ast = []
+}
 
+(* Print file *)
 let _ =
   let input = open_in filename in
   Printf.printf "\n%s\n" (BatInnerIO.read_all input)
 
+(* Parse file*)
 let _ =
   let input = open_in filename in
   let filebuf = Lexing.from_input input in
   let result = Lexer.token env filebuf in
-  let (complete_env, final_token) = result in
-  let complete_env = List.rev complete_env in
+  let (env, final_token) = result in
   List.iter 
     (fun tok -> Printf.printf "%s " (Token.token_to_string tok))
-    complete_env;
+    (List.rev env.ast);
+  Printf.printf "\n";
+  List.iter 
+    (fun state -> Printf.printf "%s " (Token.state_to_string state))
+    (List.rev env.state);
   Printf.printf "\n"
 
