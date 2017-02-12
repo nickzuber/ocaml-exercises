@@ -1,6 +1,7 @@
 (* File lexer.mll *)
 {
-exception Eof
+let __DEBUG__ = false
+
 module Token = struct
   type t =
     | INT of int
@@ -31,8 +32,8 @@ module Token = struct
     | MINUS -> "MINUS"
     | MULT -> "MULT"
     | DIV -> "DIV"
-    | EXPR el -> "EXPR(" ^ 
-      (List.fold_left (fun acc e -> acc ^ (token_to_string e) ^ " ") " " el) 
+    | EXPR el -> "EXPR("^ 
+      (List.fold_left (fun acc e -> acc ^ (token_to_string e) ^ "; ") " " el) 
       ^ ")"
     | EOL -> "EOL"
     | EOF -> "EOF"
@@ -82,7 +83,9 @@ module Token = struct
   (* Add a token to the ast *)
   let rec add_to_ast tok env =
     match List.hd env.state with
-    | STARTING_EXPR | ENDING_EXPR -> update_state INSIDE_EXPR env; add_to_ast tok env
+    | STARTING_EXPR -> 
+        let env = update_state INSIDE_EXPR env in
+        add_to_ast tok env
     | INSIDE_EXPR -> add_to_cur_expr tok env
     | _ -> env.ast <- (tok :: env.ast); env
 
@@ -96,16 +99,25 @@ module Token = struct
   (* Close current working expression and append it to the first of the 
    * rest expressions list *)
   let update_exprs expr rest =
-    let head = (List.hd rest) @ expr in
+    let head = (List.hd rest) @ [(EXPR(expr))] in
     head :: (List.tl rest)
 
   (* Remove the front expression and either add it to the ast or 
    * close current working expression and append it to the next in line *)
   let consume_expr env =
+    (* NOTE: we only ever call this function when are ending an expression,
+     * so we can handle state changing out of expression context here. *)
     let new_env =
       match env.exprs with
+      (* Consuming an empty expression, almost definitely means we're closing
+       * the final expression after just closing the second to last one in the
+       * context of some nested expressions..
+       * Ex.
+       *   (1 + (2 + 3)) + 4
+       *               ^
+       *)
       | [] -> { 
-          state = env.state; 
+          state = [REGULAR]; 
           exprs = [[]]; 
           ast = env.ast;
         }
@@ -119,7 +131,7 @@ module Token = struct
           exprs = update_exprs expr rest;
           ast = env.ast;
         }
-   in env.exprs <- new_env.exprs;
+    in env.exprs <- new_env.exprs;
     env.ast <- new_env.ast; env
 
 end
@@ -127,7 +139,10 @@ open Token
 }
 
 rule token env = parse
-  | [' ' '\t']        { debug_env env; token env lexbuf }
+  | [' ' '\t']        { 
+                        if __DEBUG__ = true then ( debug_env env );
+                        token env lexbuf
+                      }
   | ['\n' ]           { 
                         let env = add_to_ast EOL env in
                         token env lexbuf
@@ -136,30 +151,30 @@ rule token env = parse
                         let env = add_to_ast (INT(int_of_string lxm)) env in
                         token env lexbuf
                       }
-  | '+'               {
+  | '+'               { 
                         let env = add_to_ast PLUS env in
                         token env lexbuf
                       }
-  | '-'               {
+  | '-'               { 
                         let env = add_to_ast MINUS env in
                         token env lexbuf
                       }
-  | '*'               {
+  | '*'               { 
                         let env = add_to_ast MULT env in
                         token env lexbuf
                       }
-  | '/'               {
-                       let env = add_to_ast DIV env in
+  | '/'               { 
+                        let env = add_to_ast DIV env in
                         token env lexbuf
                       }
-  | '('               { 
-                        let env = add_new_expr env in
+  | '('               {  
                         let env = update_state STARTING_EXPR env in
+                        let env = add_new_expr env in
                         token env lexbuf
                       }
-  | ')'               { 
-                        let env = consume_expr env in
+  | ')'               {  
                         let env = update_state ENDING_EXPR env in
+                        let env = consume_expr env in
                         token env lexbuf
                       }
   | eof               { env, EOF }
