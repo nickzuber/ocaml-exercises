@@ -28,5 +28,5 @@ let _ =
   List.iter 
     (fun tok -> Printf.printf "%s; " (Token.token_to_string tok))
     (List.rev env.ast);
-  Printf.printf "] \n";
+  Printf.printf "] \n\n";
 
