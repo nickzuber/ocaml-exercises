@@ -22,12 +22,9 @@ let _ =
   let filebuf = Lexing.from_input input in
   let result = Lexer.token env filebuf in
   let (env, final_token) = result in
+  (* AST *)
   List.iter 
-    (fun tok -> Printf.printf "%s " (Token.token_to_string tok))
+    (fun tok -> Printf.printf "%s\n" (Token.token_to_string tok))
     (List.rev env.ast);
   Printf.printf "\n";
-  List.iter 
-    (fun state -> Printf.printf "%s " (Token.state_to_string state))
-    (List.rev env.state);
-  Printf.printf "\n"
 
