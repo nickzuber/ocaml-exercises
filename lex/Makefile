@@ -1,6 +1,9 @@
 
-run: 
+run-with-file: 
 	make all && ./obj test.txt > output.txt
+
+run-with-stdin:
+	make all && ./obj test.txt
 
 all:
 	ocamllex lexer.mll

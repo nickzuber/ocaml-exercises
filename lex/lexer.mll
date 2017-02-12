@@ -1,7 +1,7 @@
 (* File lexer.mll *)
 {
 let __DEBUG__ = false
-
+let __FILE__ = false
 module Token = struct
   type t =
     | INT of int
@@ -111,7 +111,7 @@ module Token = struct
       match env.exprs with
       (* Consuming an empty expression, almost definitely means we're closing
        * the final expression after just closing the second to last one in the
-       * context of some nested expressions..
+       * context of some nested expressions.
        * Ex.
        *   (1 + (2 + 3)) + 4
        *               ^
@@ -121,6 +121,12 @@ module Token = struct
           exprs = [[]]; 
           ast = env.ast;
         }
+      (* Consuming the final expression in a sequence of expressions. This is
+       * when the previous token was a non-expression terminating character.
+       * Ex.
+       *   (1 + (2 + 3) + 4) + 5 
+       *                   ^
+       *)
       | expr :: [] -> { 
           state = [REGULAR];
           exprs = [[]];
@@ -144,8 +150,11 @@ rule token env = parse
                         token env lexbuf
                       }
   | ['\n' ]           { 
-                        let env = add_to_ast EOL env in
-                        token env lexbuf
+                        if __FILE__ then
+                          let env = add_to_ast EOL env in
+                          token env lexbuf
+                        else
+                          env, EOL
                       }
   | ['0'-'9']+ as lxm { 
                         let env = add_to_ast (INT(int_of_string lxm)) env in
