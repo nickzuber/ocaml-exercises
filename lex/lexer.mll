@@ -1,6 +1,6 @@
 (* File lexer.mll *)
 {
-let __DEBUG__ = false
+let __DEBUG__ = true
 let __FILE__ = false
 module Token = struct
   type t =
@@ -117,7 +117,7 @@ module Token = struct
        *               ^
        *)
       | [] -> { 
-          state = [REGULAR]; 
+          state = REGULAR :: env.state; 
           exprs = [[]]; 
           ast = env.ast;
         }
@@ -128,9 +128,9 @@ module Token = struct
        *                   ^
        *)
       | expr :: [] -> { 
-          state = [REGULAR];
+          state = REGULAR :: env.state;
           exprs = [[]];
-          ast = ((EXPR(expr)) :: env.ast)
+          ast = (EXPR(expr)) :: env.ast
         }
       | expr :: rest -> {
           state = env.state;
