@@ -3,7 +3,7 @@ module Token = Lexer.Token
 include Token
 open Batteries
 
-let __FILE__ = false
+let __FILE__ = true
 
 let filename = Sys.argv.(1)
 

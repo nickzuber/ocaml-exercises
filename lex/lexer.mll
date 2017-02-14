@@ -1,7 +1,7 @@
 (* File lexer.mll *)
 {
 let __DEBUG__ = true
-let __FILE__ = false
+let __FILE__ = true
 module Token = struct
   type t =
     | INT of int
@@ -48,7 +48,9 @@ module Token = struct
   let debug_env env = 
     Printf.printf "env = {\n";
     (* state *)
-    Printf.printf "  state = %s\n" (state_to_string (List.hd env.state));
+    let state_string = (List.fold_left 
+      (fun acc s -> acc ^ (state_to_string s) ^ "; ") "" env.state) in
+    Printf.printf "  state = %s\n" state_string;
     (* exprs *)
     Printf.printf "  exprs = [ ";
     List.iter
@@ -105,6 +107,7 @@ module Token = struct
   (* Remove the front expression and either add it to the ast or 
    * close current working expression and append it to the next in line *)
   let consume_expr env =
+    Printf.printf "=== CONSUMING EXPR ===\n";
     (* NOTE: we only ever call this function when are ending an expression,
      * so we can handle state changing out of expression context here. *)
     let new_env =
@@ -133,12 +136,13 @@ module Token = struct
           ast = (EXPR(expr)) :: env.ast
         }
       | expr :: rest -> {
-          state = env.state;
+          state = INSIDE_EXPR :: env.state;
           exprs = update_exprs expr rest;
           ast = env.ast;
         }
     in env.exprs <- new_env.exprs;
-    env.ast <- new_env.ast; env
+    env.ast <- new_env.ast;
+    env.state <- new_env.state; env
 
 end
 open Token
