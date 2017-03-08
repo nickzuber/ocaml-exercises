@@ -7,10 +7,10 @@ OCB = 		ocamlbuild $(OCB_FLAGS)
 all: native
 
 run: 
-	make native && ./parser_test.native
+	make native && ./basic.native
 
 native:
-	$(OCB) lex/parser_test.native
+	$(OCB) basic/basic.native
 
 clean:
 	$(OCB) -clean
