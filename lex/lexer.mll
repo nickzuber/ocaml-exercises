@@ -107,7 +107,6 @@ module Token = struct
   (* Remove the front expression and either add it to the ast or 
    * close current working expression and append it to the next in line *)
   let consume_expr env =
-    Printf.printf "=== CONSUMING EXPR ===\n";
     (* NOTE: we only ever call this function when are ending an expression,
      * so we can handle state changing out of expression context here. *)
     let new_env =
