@@ -42,8 +42,17 @@ let parse_from_stdin () =
   let (env, final_token) = result in
   print_ast env
 
+(*
+let _ = 
+  while true do
+    let i = read_int () in
+    print_endline (string_of_int i)
+  done
+*)
+
 let _ = 
   if __FILE__ = true then
     parse_from_file ()
   else 
     parse_from_stdin ()
+
