@@ -1,6 +1,6 @@
 
 (* Doing examples and excersises for the sake of learning OCaml *)
-
+(*
 open Printf
 
 let rec fib n =
@@ -16,4 +16,32 @@ let fib_list n =
 let () = List.iter (printf "  %d\n") (fib_list 12);;
 
 printf "\n";;
+*)
+
+
+module rec BinaryExpression : sig
+  type t = {
+    left: Expression.t;
+    right: Expression.t;
+  }
+end = BinaryExpression
+
+and NumberExpression : sig
+  type t = int
+end = NumberExpression
+
+and Expression : sig
+  type t = 
+    | BinaryExpression of BinaryExpression.t
+    | NumberExpression of NumberExpression.t
+end = Expression
+
+let ast = Expression.BinaryExpression {
+  left = Expression.NumberExpression 1;
+  right = Expression.BinaryExpression {
+    left = Expression.NumberExpression 1;
+    right = Expression.NumberExpression 2;
+  }
+}
+
 
