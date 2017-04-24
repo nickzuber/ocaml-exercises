@@ -36,6 +36,8 @@ and Expression : sig
     | NumberExpression of NumberExpression.t
 end = Expression
 
+open BinaryExpression
+
 let ast = Expression.BinaryExpression {
   left = Expression.NumberExpression 1;
   right = Expression.BinaryExpression {
