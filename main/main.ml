@@ -18,7 +18,7 @@ let () = List.iter (printf "  %d\n") (fib_list 12);;
 printf "\n";;
 *)
 
-
+(*
 module rec BinaryExpression : sig
   type t = {
     left: Expression.t;
@@ -45,5 +45,51 @@ let ast = Expression.BinaryExpression {
     right = Expression.NumberExpression 2;
   }
 }
+*)
+
+module Stack : sig
+  type 'a t = Node of 'a * 'a t | Nil
+  val create : 'a -> 'a t
+  val push : 'a t -> 'a -> 'a t
+  val pop : 'a t -> 'a t
+  val size : 'a t -> int
+end = struct
+  type 'a t = 
+    | Node of 'a * 'a t
+    | Nil
+  let create n = Node (n, Nil)
+  let push s n = Node (n, s)
+  let pop s = 
+    match s with
+    | Node (n, s) -> s
+    | Nil -> s
+  let size s = 
+    let rec _size s n =
+      match s with 
+      | Node (_, s) -> _size s (n + 1)
+      | Nil -> n
+    in _size s 0
+end
+
+let rec print_stack s =
+  let open Stack in
+  match s with
+  | Node (v, n) -> 
+    print_endline v;
+    print_stack n
+  | Nil -> ()
+
+let _ = 
+  print_endline "";
+  let stack = Stack.create "first in" in
+  let stack = Stack.push stack "first push" in
+  let stack = Stack.push stack "second push" in
+  let stack = Stack.pop stack in
+  let size = Stack.size stack in
+  print_stack stack;
+  print_endline (string_of_int size)
+
+
+
 
 
