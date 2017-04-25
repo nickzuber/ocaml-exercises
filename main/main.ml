@@ -59,8 +59,7 @@ end = struct
     | Nil
   let create n = Node (n, Nil)
   let push s n = Node (n, s)
-  let pop s = 
-    match s with
+  let pop s = match s with
     | Node (n, s) -> s
     | Nil -> s
   let size s = 
