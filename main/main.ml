@@ -87,6 +87,7 @@ let _ =
   let stack = Stack.pop stack in
   let size = Stack.size stack in
   print_stack stack;
+  let open Core in
   print_endline (string_of_int size)
 
 
