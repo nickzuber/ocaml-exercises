@@ -1,7 +1,7 @@
 
 # Build OCaml projects with ocamlbuild
 
-OCB_FLAGS = -use-ocamlfind -pkg core -tags thread 
+OCB_FLAGS = -use-ocamlfind -pkg core,ppx_deriving.show -tags thread 
 OCB = 		ocamlbuild $(OCB_FLAGS)
 
 all: native
