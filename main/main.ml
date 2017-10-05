@@ -12,9 +12,6 @@ module A_DEFINITION = struct
     in B.baz n
 end
 
-
-(* --- *)
-
 module rec A : sig
   val foo : int -> int
 end = A_DEFINITION
